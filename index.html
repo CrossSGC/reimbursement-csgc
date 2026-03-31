@@ -1433,13 +1433,25 @@
     y += declLines.length * 4 + 6;
 
     // ── Signature ──
-    const sigDataUrl = getSigDataUrl();
-    if (sigDataUrl && sigDataUrl.startsWith('data:image')) {
-      try {
-        const sigType = sigDataUrl.includes('image/png') ? 'PNG' : 'JPEG';
-        doc.addImage(sigDataUrl, sigType, ml, y, 70, 18);
-      } catch(sigErr) {
-        console.warn('Signature image error:', sigErr);
+    if (sigMode === 'draw') {
+      const canvas = document.getElementById('sig');
+      const blank = !sigCtx.getImageData(0, 0, canvas.width, canvas.height).data.some(x => x !== 0);
+      if (!blank) {
+        try {
+          const sigDataUrl = canvas.toDataURL('image/png');
+          doc.addImage(sigDataUrl, 'PNG', ml, y, 70, 18);
+        } catch(sigErr) {
+          console.warn('Draw signature error:', sigErr);
+        }
+      }
+    } else {
+      // Typed signature — render directly as styled text, no canvas/image needed
+      const sigText = document.getElementById('sigTypedInput').value.trim();
+      if (sigText) {
+        doc.setFont('times', 'italic');
+        doc.setFontSize(22);
+        setTxt('#0f0e0d');
+        txt(ml, y + 12, sigText);
       }
     }
     setDraw('#aaa');
@@ -1825,7 +1837,7 @@
     } else {
       setStatus('error', 'No connection — enter invoice number manually');
       document.getElementById('invoiceNum').value = '';
-      document.getElementById('invoiceNum').placeholder = '003';
+      document.getElementById('invoiceNum').placeholder = '005';
     }
   }
 
