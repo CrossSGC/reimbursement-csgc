@@ -303,6 +303,70 @@
   }
   .btn-clear:hover { color: var(--danger); border-color: var(--danger); }
 
+  /* ── PAYMENT METHOD TABS (inside new emp modal) ── */
+  .pay-tabs {
+    display: flex;
+    gap: 0;
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+    width: fit-content;
+  }
+  .pay-tab {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    padding: .5rem 1.3rem;
+    cursor: pointer;
+    border: none;
+    background: #fff;
+    color: var(--muted);
+    transition: background .15s, color .15s;
+  }
+  .pay-tab:first-child { border-radius: 7px 0 0 7px; }
+  .pay-tab:last-child  { border-radius: 0 7px 7px 0; }
+  .pay-tab.active { background: var(--accent); color: #fff; }
+  .pay-panel { display: none; }
+  .pay-panel.active { display: block; }
+
+  /* ── NEW EMPLOYEE MODAL ── */
+  .modal-wide {
+    max-width: 640px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-wide h2 { color: var(--accent); }
+  .new-emp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; margin-top: .5rem; }
+  .new-emp-grid .field { margin-bottom: 0; }
+  .new-emp-grid .col-span-2 { grid-column: span 2; }
+  .section-divider {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    grid-column: span 2;
+    padding-top: .5rem;
+    border-top: 1px solid var(--border);
+    margin-top: .3rem;
+  }
+  .register-hint {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    background: #fffbec;
+    border: 1.5px solid var(--gold);
+    border-radius: 8px;
+    padding: .7rem 1rem;
+    font-size: .82rem;
+    color: #5a4000;
+    margin-top: .5rem;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .register-hint:hover { background: #fff3cc; }
+
   /* ── EMAIL MODAL ── */
   .overlay {
     display: none;
@@ -772,6 +836,125 @@
   <span class="lightbox-name" id="lightboxName"></span>
 </div>
 
+<!-- NEW EMPLOYEE MODAL -->
+<div class="overlay" id="newEmpModal">
+  <div class="modal modal-wide">
+    <h2>👤 Register New Employee</h2>
+    <p style="font-size:.84rem;color:var(--muted);margin-bottom:1.2rem">Your details will be saved for future invoices — you won't need to fill this in again.</p>
+
+    <div class="new-emp-grid">
+      <!-- Personal -->
+      <div class="section-divider">Personal Information</div>
+      <div class="field col-span-2">
+        <label>Full Name</label>
+        <input id="newName" type="text" placeholder="Full legal name">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input id="newEmail" type="email" placeholder="email@company.com">
+      </div>
+      <div class="field">
+        <label>Phone</label>
+        <input id="newPhone" type="text" placeholder="(000) 000-0000">
+      </div>
+      <div class="field col-span-2">
+        <label>Address</label>
+        <input id="newAddress" type="text" placeholder="Street, city, state, ZIP">
+      </div>
+
+      <!-- Banking -->
+      <div class="section-divider">Payment Method</div>
+
+      <div style="grid-column:span 2">
+        <div class="pay-tabs">
+          <button class="pay-tab active" onclick="switchPayTab('ach')">🏦 ACH (Domestic)</button>
+          <button class="pay-tab" onclick="switchPayTab('wire')">🌐 International Wire</button>
+        </div>
+
+        <!-- ACH -->
+        <div class="pay-panel active" id="panelACH">
+          <div class="new-emp-grid" style="margin-top:.8rem">
+            <div class="field">
+              <label>Bank Name</label>
+              <input id="newBankName" type="text" placeholder="e.g. Chase, Truist, Wells Fargo">
+            </div>
+            <div class="field">
+              <label>Account Holder Name</label>
+              <input id="newBankHolder" type="text" placeholder="Name on account">
+            </div>
+            <div class="field">
+              <label>Account Number</label>
+              <input id="newBankAccount" type="text" placeholder="Account number">
+            </div>
+            <div class="field">
+              <label>Routing Number (ABA)</label>
+              <input id="newBankRouting" type="text" placeholder="9-digit routing number">
+            </div>
+            <div class="field">
+              <label>Account Type</label>
+              <select id="newAccountType">
+                <option value="Checking">Checking</option>
+                <option value="Savings">Savings</option>
+                <option value="Business Checking">Business Checking</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- WIRE -->
+        <div class="pay-panel" id="panelWire">
+          <div class="new-emp-grid" style="margin-top:.8rem">
+            <div class="field">
+              <label>Bank Name</label>
+              <input id="wireBank" type="text" placeholder="Full bank name">
+            </div>
+            <div class="field">
+              <label>Account Holder Name</label>
+              <input id="wireHolder" type="text" placeholder="Name on account">
+            </div>
+            <div class="field">
+              <label>Account Number / IBAN</label>
+              <input id="wireAccount" type="text" placeholder="Account number or IBAN">
+            </div>
+            <div class="field">
+              <label>SWIFT / BIC Code</label>
+              <input id="wireSwift" type="text" placeholder="e.g. CHASUS33">
+            </div>
+            <div class="field">
+              <label>Bank Address</label>
+              <input id="wireBankAddress" type="text" placeholder="Bank branch address">
+            </div>
+            <div class="field">
+              <label>Country</label>
+              <input id="wireCountry" type="text" placeholder="Country of bank">
+            </div>
+            <div class="field">
+              <label>Intermediary Bank (if required)</label>
+              <input id="wireIntermediary" type="text" placeholder="Intermediary bank name (optional)">
+            </div>
+            <div class="field">
+              <label>Intermediary SWIFT</label>
+              <input id="wireIntSwift" type="text" placeholder="Intermediary SWIFT (optional)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:.72rem;color:var(--muted);margin-top:1rem">
+      🔒 Your banking details are stored securely in the company's internal spreadsheet and used only for reimbursement processing.
+    </p>
+
+    <div class="modal-actions">
+      <button class="btn btn-clear" onclick="closeNewEmpModal()">Cancel</button>
+      <button class="btn btn-pdf" id="saveEmpBtn" onclick="saveNewEmployee()">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+        Save & Continue
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- EMAIL MODAL -->
 <div class="overlay" id="emailModal">
   <div class="modal">
@@ -947,7 +1130,7 @@
     const total = data.reduce((s, r) => s + r.amount, 0);
     const sym = { USD: '$', BRL: 'R$', EUR: '€' }[document.getElementById('currency').value] || '$';
     document.getElementById('totalDisplay').textContent =
-      sym + ' ' + total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      sym + ' ' + total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     return total;
   }
 
@@ -1032,8 +1215,8 @@
   function collectData() {
     const cur = document.getElementById('currency').value;
     const sym = { USD: '$', BRL: 'R$', EUR: '€' }[cur];
-    const fmt = v => sym + ' ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const fmtDate = s => { if (!s) return ''; const [y,m,d] = s.split('-'); return `${d}/${m}/${y}`; };
+    const fmt = v => sym + ' ' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtDate = s => { if (!s) return ''; const [y,m,d] = s.split('-'); return `${m}/${d}/${y}`; };
 
     const expenses = getRowData().filter(r => r.desc || r.amount);
     const total = expenses.reduce((s, r) => s + r.amount, 0);
@@ -1063,162 +1246,206 @@
     if (!d.payeeName) { showToast('⚠️ Please enter the employee name'); return; }
     if (d.expenses.length === 0) { showToast('⚠️ Please add at least one expense'); return; }
 
-    // Increment counter ONLY when generating the PDF
-    setStatus('loading', 'Confirming invoice number...');
-    const confirmed = await confirmAndIncrementCounter();
-    if (confirmed) {
-      document.getElementById('invoiceNum').value = confirmed;
-      d.invoiceNum = confirmed;
-      setStatus('ok', `Invoice #${confirmed} confirmed ✓`);
-    }
-
+    try {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    const W = 210, ml = 20, mr = 20, cw = W - ml - mr;
-
-    // ── helpers ──
+    const W = 210, ml = 18, mr = 18, cw = W - ml - mr;
     const hex = h => { const r = parseInt(h.slice(1,3),16)/255, g = parseInt(h.slice(3,5),16)/255, b = parseInt(h.slice(5,7),16)/255; return [r,g,b]; };
     const setFill = h => doc.setFillColor(...hex(h));
     const setDraw = h => doc.setDrawColor(...hex(h));
     const setTxt  = h => doc.setTextColor(...hex(h));
 
+    // Safe text helper — always strings, never undefined
+    const txt = (x, yy, str, opts) => {
+      doc.text(String(str ?? ''), x, yy, opts || {});
+    };
+
+    // Multi-line label+value helper — returns new y after printing
+    const field = (x, yy, lbl, val, maxW) => {
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); setTxt('#8a8278');
+      txt(x, yy, lbl.toUpperCase());
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); setTxt('#0f0e0d');
+      const lines = doc.splitTextToSize(String(val || '—'), maxW || (cw/2 - 10));
+      doc.text(lines, x, yy + 4.5);
+      return yy + 4.5 + (lines.length - 1) * 4.5;
+    };
+
     let y = 0;
 
-    // ── Header bar ──
+    // ── Header ──
     setFill('#0f0e0d');
-    doc.rect(0, 0, W, 28, 'F');
+    doc.rect(0, 0, W, 30, 'F');
     setFill('#c9a84c');
-    doc.rect(0, 28, W, 3, 'F');
+    doc.rect(0, 30, W, 3, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(20); setTxt('#faf8f5');
+    txt(ml, 19, 'REIMBURSEMENT INVOICE');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); setTxt('#e8d49a');
+    txt(ml, 26, 'CROSS SYSTEMS GROUP CORP. — INTERNAL DOCUMENT');
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    setTxt('#faf8f5');
-    doc.text('REIMBURSEMENT INVOICE', ml, 18);
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'normal');
-    setTxt('#e8d49a');
-    doc.text('INTERNAL REIMBURSEMENT DOCUMENT', ml, 24);
+    // Invoice # and Date top right
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#c9a84c');
+    txt(W - mr, 17, `Invoice #${d.invoiceNum || '—'}`, { align: 'right' });
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); setTxt('#e8d49a');
+    txt(W - mr, 24, d.invoiceDate || '', { align: 'right' });
 
     y = 40;
 
-    // ── Invoice meta ──
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'bold');
-    setTxt('#1a3a5c');
-    doc.text(`Nº: ${d.invoiceNum || '—'}`, W - mr, y, { align: 'right' });
-    doc.text(`Data: ${d.invoiceDate}`, W - mr, y + 5, { align: 'right' });
+    // ── FROM / TO ──
+    const boxH = 42;
+    const bw = (cw / 2) - 3;
 
-    // ── FROM / TO boxes ──
-    setFill('#f2ede4');
-    setDraw('#ddd8cf');
-    doc.roundedRect(ml, y, (cw/2) - 4, 30, 2, 2, 'FD');
-    doc.roundedRect(ml + cw/2 + 4, y, (cw/2) - 4, 30, 2, 2, 'FD');
+    setFill('#f7f4ef'); setDraw('#ddd8cf');
+    doc.roundedRect(ml, y, bw, boxH, 2, 2, 'FD');
+    doc.roundedRect(ml + bw + 6, y, bw, boxH, 2, 2, 'FD');
 
-    const label = (x, y, t) => {
-      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5);
-      setTxt('#8a8278');
-      doc.text(t.toUpperCase(), x, y);
-    };
-    const body = (x, y, t, bold=false) => {
-      doc.setFont('helvetica', bold ? 'bold' : 'normal'); doc.setFontSize(8);
-      setTxt('#0f0e0d');
-      doc.text(t, x, y, { maxWidth: (cw/2) - 12 });
-    };
+    // FROM
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); setTxt('#c9a84c');
+    txt(ml + 4, y + 6, 'FROM — EMPLOYEE');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#0f0e0d');
+    txt(ml + 4, y + 13, d.payeeName || '—');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#444');
+    txt(ml + 4, y + 19, d.payeeEmail || '', { maxWidth: bw - 8 });
+    txt(ml + 4, y + 24, d.payeePhone || '', { maxWidth: bw - 8 });
+    const addrLines = doc.splitTextToSize(d.payeeAddress || '', bw - 8);
+    doc.text(addrLines, ml + 4, y + 30);
 
-    label(ml+4, y+6, 'From (Employee)');
-    body(ml+4, y+12, d.payeeName || '—', true);
-    body(ml+4, y+17, d.payeeEmail);
-    body(ml+4, y+22, d.payeePhone);
-    body(ml+4, y+27, d.payeeAddress);
+    // TO
+    const bx = ml + bw + 10;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); setTxt('#c9a84c');
+    txt(bx, y + 6, 'BILL TO — PAYER');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#0f0e0d');
+    txt(bx, y + 13, d.payerName || '—');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#444');
+    const payerAddrLines = doc.splitTextToSize(d.payerAddress || '', bw - 8);
+    doc.text(payerAddrLines, bx, y + 19);
 
-    const bx = ml + cw/2 + 8;
-    label(bx, y+6, 'To (Payer)');
-    body(bx, y+12, d.payerName || '—', true);
-    body(bx, y+17, d.payerAddress);
+    y += boxH + 8;
 
-    y += 38;
+    // ── Expense Table ──
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#1a3a5c');
+    txt(ml, y, 'EXPENSE DETAILS');
+    y += 5;
 
-    // ── Expense table ──
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
-    setTxt('#1a3a5c');
-    doc.text('EXPENSE DETAILS', ml, y);
-    y += 4;
-
-    // header
+    // Table header
     setFill('#0f0e0d');
-    doc.rect(ml, y, cw, 7, 'F');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
-    setTxt('#faf8f5');
-    doc.text('DESCRIPTION', ml+3, y+4.8);
-    doc.text('DATE', ml + cw*0.65, y+4.8);
-    doc.text('AMOUNT', ml+cw-3, y+4.8, { align: 'right' });
-    y += 7;
+    doc.rect(ml, y, cw, 8, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8); setTxt('#faf8f5');
+    txt(ml + 3, y + 5.5, 'DESCRIPTION');
+    txt(ml + cw * 0.60, y + 5.5, 'DATE');
+    txt(ml + cw - 3, y + 5.5, 'AMOUNT', { align: 'right' });
+    y += 8;
 
     d.expenses.forEach((e, i) => {
-      const bg = i % 2 === 0 ? '#faf8f5' : '#f2ede4';
-      setFill(bg);
-      doc.rect(ml, y, cw, 7, 'F');
-      doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
-      setTxt('#0f0e0d');
-      doc.text(e.desc || '—', ml+3, y+4.8, { maxWidth: cw*0.6 });
-      doc.text(e.date ? (() => { const [a,b,c] = e.date.split('-'); return `${c}/${b}/${a}`; })() : '—', ml + cw*0.65, y+4.8);
-      doc.text(d.fmt(e.amount), ml+cw-3, y+4.8, { align: 'right' });
-      y += 7;
+      const rowH = 8;
+      setFill(i % 2 === 0 ? '#faf8f5' : '#f2ede4');
+      doc.rect(ml, y, cw, rowH, 'F');
+      setDraw('#e8e2d8');
+      doc.rect(ml, y, cw, rowH, 'S');
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(8); setTxt('#0f0e0d');
+      txt(ml + 3, y + 5.5, e.desc || '—', { maxWidth: cw * 0.55 });
+      txt(ml + cw * 0.60, y + 5.5, e.date ? (() => { const [a,b,c] = e.date.split('-'); return `${b}/${c}/${a}`; })() : '—');
+      txt(ml + cw - 3, y + 5.5, d.fmt(e.amount), { align: 'right' });
+      y += rowH;
     });
 
-    // total row
+    // Total row
     setFill('#1a3a5c');
-    doc.rect(ml, y, cw, 8, 'F');
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
-    setTxt('#faf8f5');
-    doc.text('TOTAL', ml+3, y+5.5);
-    doc.text(d.totalFmt, ml+cw-3, y+5.5, { align: 'right' });
-    y += 14;
+    doc.rect(ml, y, cw, 9, 'F');
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#faf8f5');
+    txt(ml + 3, y + 6, 'TOTAL REIMBURSEMENT AMOUNT');
+    txt(ml + cw - 3, y + 6, d.totalFmt, { align: 'right' });
+    y += 15;
 
-    // receipt indicator note
+    // Receipt note
     const withReceipts = d.expenses.filter(e => e.receipt && e.receipt.type !== 'application/pdf');
-    const pdfReceipts = d.expenses.filter(e => e.receipt && e.receipt.type === 'application/pdf');
+    const pdfReceipts  = d.expenses.filter(e => e.receipt && e.receipt.type === 'application/pdf');
     if (withReceipts.length > 0 || pdfReceipts.length > 0) {
       doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); setTxt('#2d6a4f');
-      doc.text(`📎 ${withReceipts.length + pdfReceipts.length} receipt(s) attached — see following pages`, ml, y);
-      y += 6;
+      txt(ml, y, `* ${withReceipts.length + pdfReceipts.length} receipt(s) attached — see following pages`);
+      y += 7;
     }
 
-    // ── Payment ──
+    // ── Payment Instructions ──
     if (d.bankName || d.bankHolder || d.bankAccount) {
-      setFill('#f2ede4');
-      setDraw('#ddd8cf');
-      doc.roundedRect(ml, y, cw, 26, 2, 2, 'FD');
-      label(ml+4, y+6, 'Payment Instructions');
+      const isWire = d.bankSwift && d.bankSwift.startsWith('WIRE');
+      const isACH  = d.bankSwift && d.bankSwift.startsWith('ACH');
+
+      // Parse ACH/Wire structured string
+      const parts = {};
+      if (d.bankSwift) {
+        d.bankSwift.split('|').forEach(p => {
+          const idx = p.indexOf(':');
+          if (idx > -1) {
+            const k = p.slice(0, idx).trim();
+            const v = p.slice(idx + 1).trim();
+            parts[k] = v;
+          }
+        });
+      }
+
+      const payTitle = isWire ? 'INTERNATIONAL WIRE INSTRUCTIONS'
+                     : isACH  ? 'ACH PAYMENT INSTRUCTIONS'
+                     : 'PAYMENT INSTRUCTIONS';
+
+      setFill('#f7f4ef'); setDraw('#ddd8cf');
+      const payH = isWire ? 48 : 32;
+      doc.roundedRect(ml, y, cw, payH, 2, 2, 'FD');
+
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(7); setTxt('#c9a84c');
+      txt(ml + 4, y + 6, payTitle);
+
       doc.setFont('helvetica', 'normal'); doc.setFontSize(8); setTxt('#0f0e0d');
-      if (d.bankName)    doc.text(`Bank: ${d.bankName}`,                    ml+4, y+12);
-      if (d.bankHolder)  doc.text(`Account Holder: ${d.bankHolder}`,         ml+4, y+17);
-      if (d.bankAccount) doc.text(`Account Number: ${d.bankAccount}`,        ml+4, y+22);
-      if (d.bankSwift)   doc.text(`Routing / SWIFT: ${d.bankSwift}`,         ml + cw/2, y+22);
-      y += 32;
+      const col1 = ml + 4;
+      const col2 = ml + cw / 2 + 2;
+      const colW = cw / 2 - 10;
+
+      if (isACH) {
+        txt(col1, y + 13, `Bank: ${d.bankName || ''}`, { maxWidth: colW });
+        txt(col2, y + 13, `Account Holder: ${d.bankHolder || ''}`, { maxWidth: colW });
+        txt(col1, y + 20, `Account Number: ${d.bankAccount || ''}`, { maxWidth: colW });
+        txt(col2, y + 20, `Routing (ABA): ${parts['Routing'] || ''}`, { maxWidth: colW });
+        txt(col1, y + 27, `Account Type: ${parts['Type'] || ''}`, { maxWidth: colW });
+      } else if (isWire) {
+        txt(col1, y + 13, `Bank: ${d.bankName || ''}`, { maxWidth: colW });
+        txt(col2, y + 13, `Account Holder: ${d.bankHolder || ''}`, { maxWidth: colW });
+        txt(col1, y + 20, `Account / IBAN: ${d.bankAccount || ''}`, { maxWidth: colW });
+        txt(col2, y + 20, `SWIFT/BIC: ${parts['SWIFT'] || ''}`, { maxWidth: colW });
+        txt(col1, y + 27, `Country: ${parts['Country'] || ''}`, { maxWidth: colW });
+        txt(col2, y + 27, `Bank Address: ${parts['Bank Addr'] || ''}`, { maxWidth: colW });
+        if (parts['Intermediary']) txt(col1, y + 34, `Intermediary: ${parts['Intermediary']}`, { maxWidth: cw - 8 });
+      } else {
+        txt(col1, y + 13, `Bank: ${d.bankName || ''}`, { maxWidth: colW });
+        txt(col2, y + 13, `Account Holder: ${d.bankHolder || ''}`, { maxWidth: colW });
+        txt(col1, y + 20, `Account Number: ${d.bankAccount || ''}`, { maxWidth: colW });
+        txt(col2, y + 20, `Routing / SWIFT: ${d.bankSwift || ''}`, { maxWidth: colW });
+      }
+
+      y += payH + 8;
     }
 
-    // ── Declaration + Signature ──
-    doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); setTxt('#8a8278');
+    // ── Declaration ──
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); setTxt('#666');
     const decl = 'I hereby certify that the expenses listed above were incurred for legitimate business purposes on behalf of Cross Systems Group Corp. and that I have not been reimbursed for these amounts previously. Original receipts are available upon request.';
-    doc.text(decl, ml, y, { maxWidth: cw });
-    y += 12;
+    const declLines = doc.splitTextToSize(decl, cw);
+    doc.text(declLines, ml, y);
+    y += declLines.length * 4 + 6;
 
-    // Signature
+    // ── Signature ──
     const sigDataUrl = getSigDataUrl();
     if (sigDataUrl) {
       doc.addImage(sigDataUrl, 'PNG', ml, y, 70, 18);
     }
-    setDraw('#ddd8cf');
+    setDraw('#aaa');
     doc.line(ml, y + 20, ml + 80, y + 20);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#8a8278');
-    doc.text(getSignerName(), ml, y + 25);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#888');
+    txt(ml, y + 25, getSignerName());
+    txt(ml, y + 30, `Date: ${d.invoiceDate}`);
 
     // ── Footer ──
     setFill('#0f0e0d');
     doc.rect(0, 287, W, 10, 'F');
     doc.setFont('helvetica', 'normal'); doc.setFontSize(7); setTxt('#8a8278');
-    doc.text(`Generated on ${new Date().toLocaleDateString('en-US')} · Confidential document`, W/2, 293.5, { align: 'center' });
+    txt(W / 2, 293.5, `Generated on ${new Date().toLocaleDateString('en-US')} · Confidential document`, { align: 'center' });
 
     const fname = `Reimbursement_${(d.payeeName || 'Employee').replace(/\s+/g,'_')}_${d.invoiceNum || '001'}.pdf`;
 
@@ -1234,7 +1461,7 @@
       doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#faf8f5');
       doc.text(`RECEIPT ${i+1} — ${e.desc || 'Expense'}`, ml, 11);
       doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#e8d49a');
-      doc.text(`${e.receipt.name}  ·  ${d.fmt(e.amount)}  ·  ${e.date ? (() => { const [a,b,c] = e.date.split('-'); return `${c}/${b}/${a}`; })() : ''}`, W - mr, 11, { align: 'right' });
+      doc.text(`${e.receipt.name}  ·  ${d.fmt(e.amount)}  ·  ${e.date ? (() => { const [a,b,c] = e.date.split('-'); return `${b}/${c}/${a}`; })() : ''}`, W - mr, 11, { align: 'right' });
 
       // image
       try {
@@ -1255,10 +1482,29 @@
     });
 
     doc.save(fname);
+
+    // Only increment counter and save to Sheets AFTER successful PDF save
+    setStatus('loading', 'Confirming invoice number...');
+    const confirmed = await confirmAndIncrementCounter();
+    if (confirmed) {
+      document.getElementById('invoiceNum').value = confirmed;
+      d.invoiceNum = confirmed;
+      setStatus('ok', `Invoice #${confirmed} confirmed ✓`);
+    }
+
     showToast('✅ PDF generated successfully!');
 
-    // Atualiza o campo com o próximo número disponível para uma eventual próxima invoice
+    // Save invoice record to Google Sheets
+    saveInvoiceToSheets(d);
+
+    // Refresh counter for next invoice
     setTimeout(() => initCounter(), 1500);
+
+    } catch(err) {
+      console.error('PDF generation error:', err);
+      showToast('❌ Error generating PDF: ' + err.message);
+      setStatus('error', 'PDF error — try again');
+    }
   }
 
   // ── EMAIL MODAL ──
@@ -1326,14 +1572,23 @@
   function onNameInput(val) {
     const list = document.getElementById('autocompleteList');
     const q = val.trim().toLowerCase();
-    if (!q || employees.length === 0) { closeAutocomplete(); return; }
+    if (!q) { closeAutocomplete(); return; }
 
     const matches = employees.filter(e => e.name.toLowerCase().includes(q));
-    if (matches.length === 0) { closeAutocomplete(); return; }
+
+    if (matches.length === 0) {
+      // Show "register" prompt
+      list.innerHTML = `<div class="register-hint" onmousedown="openNewEmpModal('${val.replace(/'/g,"\\'")}')">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
+        <span><strong>${val}</strong> not found — click to register as new employee</span>
+      </div>`;
+      list.classList.add('open');
+      return;
+    }
 
     list.innerHTML = matches.map(emp => {
       const initials = emp.name.split(' ').slice(0,2).map(n => n[0]).join('').toUpperCase();
-      return `<div class="autocomplete-item" onmousedown="selectEmployee('${emp.name}')">
+      return `<div class="autocomplete-item" onmousedown="selectEmployee('${emp.name.replace(/'/g,"\\'")}')">
         <div class="emp-avatar">${initials}</div>
         <div class="emp-info">
           <span class="emp-name">${emp.name}</span>
@@ -1344,6 +1599,121 @@
     list.classList.add('open');
   }
 
+  // ── NEW EMPLOYEE MODAL ──
+  let currentPayTab = 'ach';
+
+  function switchPayTab(tab) {
+    currentPayTab = tab;
+    document.querySelectorAll('.pay-tab').forEach((t, i) => {
+      t.classList.toggle('active', (i === 0 && tab === 'ach') || (i === 1 && tab === 'wire'));
+    });
+    document.getElementById('panelACH').classList.toggle('active', tab === 'ach');
+    document.getElementById('panelWire').classList.toggle('active', tab === 'wire');
+  }
+
+  function openNewEmpModal(prefillName) {
+    closeAutocomplete();
+    currentPayTab = 'ach';
+    switchPayTab('ach');
+    document.getElementById('newName').value        = prefillName || document.getElementById('payeeName').value || '';
+    document.getElementById('newEmail').value       = '';
+    document.getElementById('newPhone').value       = '';
+    document.getElementById('newAddress').value     = '';
+    // Clear ACH
+    document.getElementById('newBankName').value    = '';
+    document.getElementById('newBankHolder').value  = '';
+    document.getElementById('newBankAccount').value = '';
+    document.getElementById('newBankRouting').value = '';
+    // Clear Wire
+    document.getElementById('wireBank').value           = '';
+    document.getElementById('wireHolder').value         = '';
+    document.getElementById('wireAccount').value        = '';
+    document.getElementById('wireSwift').value          = '';
+    document.getElementById('wireBankAddress').value    = '';
+    document.getElementById('wireCountry').value        = '';
+    document.getElementById('wireIntermediary').value   = '';
+    document.getElementById('wireIntSwift').value       = '';
+    document.getElementById('newEmpModal').classList.add('open');
+    setTimeout(() => document.getElementById('newEmail').focus(), 100);
+  }
+
+  function closeNewEmpModal() {
+    document.getElementById('newEmpModal').classList.remove('open');
+  }
+
+  async function saveNewEmployee() {
+    const name    = document.getElementById('newName').value.trim();
+    const email   = document.getElementById('newEmail').value.trim();
+    const phone   = document.getElementById('newPhone').value.trim();
+    const address = document.getElementById('newAddress').value.trim();
+
+    if (!name)  { showToast('⚠️ Please enter a full name'); return; }
+    if (!email) { showToast('⚠️ Please enter an email address'); return; }
+
+    let params = { action: 'addEmployee', name, email, phone, address };
+
+    if (currentPayTab === 'ach') {
+      params.achBank    = document.getElementById('newBankName').value.trim();
+      params.achHolder  = document.getElementById('newBankHolder').value.trim();
+      params.achAccount = document.getElementById('newBankAccount').value.trim();
+      params.achRouting = document.getElementById('newBankRouting').value.trim();
+      params.achType    = document.getElementById('newAccountType').value;
+      // Wire fields empty
+      params.wireBank = params.wireHolder = params.wireAccount = params.wireSwift = '';
+      params.wireBankAddress = params.wireCountry = params.wireIntermediary = params.wireIntSwift = '';
+    } else {
+      params.wireBank        = document.getElementById('wireBank').value.trim();
+      params.wireHolder      = document.getElementById('wireHolder').value.trim();
+      params.wireAccount     = document.getElementById('wireAccount').value.trim();
+      params.wireSwift       = document.getElementById('wireSwift').value.trim();
+      params.wireBankAddress = document.getElementById('wireBankAddress').value.trim();
+      params.wireCountry     = document.getElementById('wireCountry').value.trim();
+      params.wireIntermediary= document.getElementById('wireIntermediary').value.trim();
+      params.wireIntSwift    = document.getElementById('wireIntSwift').value.trim();
+      // ACH fields empty
+      params.achBank = params.achHolder = params.achAccount = params.achRouting = params.achType = '';
+    }
+
+    const btn = document.getElementById('saveEmpBtn');
+    btn.innerHTML = 'Saving...';
+    btn.disabled = true;
+
+    const data = await gasCall(params);
+
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg> Save & Continue';
+
+    if (data.ok) {
+      // Build local employee object matching new schema
+      const newEmp = {
+        name, email, phone, address,
+        achBank:         params.achBank,
+        achHolder:       params.achHolder,
+        achAccount:      params.achAccount,
+        achRouting:      params.achRouting,
+        achType:         params.achType,
+        wireBank:        params.wireBank,
+        wireHolder:      params.wireHolder,
+        wireAccount:     params.wireAccount,
+        wireSwift:       params.wireSwift,
+        wireBankAddress: params.wireBankAddress,
+        wireCountry:     params.wireCountry,
+        wireIntermediary:params.wireIntermediary,
+        wireIntSwift:    params.wireIntSwift,
+      };
+      employees.push(newEmp);
+      selectEmployee(name);
+      closeNewEmpModal();
+      showToast(`✅ ${name} registered and fields filled!`);
+    } else {
+      showToast('❌ Error saving — please try again');
+    }
+  }
+
+  document.getElementById('newEmpModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeNewEmpModal();
+  });
+
   function selectEmployee(name) {
     const emp = employees.find(e => e.name === name);
     if (!emp) return;
@@ -1352,16 +1722,55 @@
     document.getElementById('payeeEmail').value   = emp.email;
     document.getElementById('payeePhone').value   = emp.phone;
     document.getElementById('payeeAddress').value = emp.address;
-    document.getElementById('bankName').value     = emp.bankName;
-    document.getElementById('bankHolder').value   = emp.bankHolder;
-    document.getElementById('bankAccount').value  = emp.bankAccount;
-    document.getElementById('bankSwift').value    = emp.routing;
+
+    // Prefer ACH if available, else Wire
+    const hasACH  = emp.achBank || emp.achAccount;
+    const hasWire = emp.wireBank || emp.wireAccount;
+
+    if (hasACH) {
+      document.getElementById('bankName').value    = emp.achBank    || '';
+      document.getElementById('bankHolder').value  = emp.achHolder  || '';
+      document.getElementById('bankAccount').value = emp.achAccount || '';
+      document.getElementById('bankSwift').value   = `ACH | Routing: ${emp.achRouting || ''} | Type: ${emp.achType || ''}`;
+    } else if (hasWire) {
+      document.getElementById('bankName').value    = emp.wireBank    || '';
+      document.getElementById('bankHolder').value  = emp.wireHolder  || '';
+      document.getElementById('bankAccount').value = emp.wireAccount || '';
+      document.getElementById('bankSwift').value   = `WIRE | SWIFT: ${emp.wireSwift || ''} | Country: ${emp.wireCountry || ''}${emp.wireIntermediary ? ` | Intermediary: ${emp.wireIntermediary}` : ''}`;
+    } else {
+      // Legacy fallback (old 8-column format)
+      document.getElementById('bankName').value    = emp.bankName    || '';
+      document.getElementById('bankHolder').value  = emp.bankHolder  || '';
+      document.getElementById('bankAccount').value = emp.bankAccount || '';
+      document.getElementById('bankSwift').value   = emp.routing     || '';
+    }
 
     closeAutocomplete();
     const badge = document.getElementById('autofillBadge');
     badge.style.display = 'inline-flex';
     setTimeout(() => badge.style.display = 'none', 3000);
     showToast(`✓ ${emp.name}'s details filled automatically!`);
+  }
+
+  // ── SAVE INVOICE TO SHEETS ──
+  function saveInvoiceToSheets(d) {
+    const expensesSummary = d.expenses
+      .filter(e => e.desc)
+      .map(e => `${e.desc} ($${e.amount.toFixed(2)})`)
+      .join(', ');
+
+    gasCall({
+      action:        'addInvoice',
+      invoiceNum:    d.invoiceNum    || '',
+      employeeName:  d.payeeName    || '',
+      employeeEmail: d.payeeEmail   || '',
+      date:          document.getElementById('invoiceDate').value || '',
+      total:         String(d.total || 0),
+      expenses:      expensesSummary,
+    }).then(data => {
+      if (data.ok) console.log('✓ Invoice saved to Sheets');
+      else console.warn('Invoice save failed:', data);
+    });
   }
 
   function closeAutocomplete() {
