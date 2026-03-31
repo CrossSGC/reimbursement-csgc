@@ -1257,7 +1257,9 @@
 
     // Safe text helper — always strings, never undefined
     const txt = (x, yy, str, opts) => {
-      doc.text(String(str ?? ''), x, yy, opts || {});
+      const s = (str === null || str === undefined) ? '' : String(str);
+      if (opts) doc.text(s, x, yy, opts);
+      else doc.text(s, x, yy);
     };
 
     // Multi-line label+value helper — returns new y after printing
@@ -1303,10 +1305,10 @@
     txt(ml + 4, y + 6, 'FROM — EMPLOYEE');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#0f0e0d');
     txt(ml + 4, y + 13, d.payeeName || '—');
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#444');
-    txt(ml + 4, y + 19, d.payeeEmail || '', { maxWidth: bw - 8 });
-    txt(ml + 4, y + 24, d.payeePhone || '', { maxWidth: bw - 8 });
-    const addrLines = doc.splitTextToSize(d.payeeAddress || '', bw - 8);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#444444');
+    txt(ml + 4, y + 19, d.payeeEmail || '');
+    txt(ml + 4, y + 24, d.payeePhone || '');
+    const addrLines = doc.splitTextToSize(String(d.payeeAddress || ''), bw - 8);
     doc.text(addrLines, ml + 4, y + 30);
 
     // TO
@@ -1315,8 +1317,8 @@
     txt(bx, y + 6, 'BILL TO — PAYER');
     doc.setFont('helvetica', 'bold'); doc.setFontSize(9); setTxt('#0f0e0d');
     txt(bx, y + 13, d.payerName || '—');
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#444');
-    const payerAddrLines = doc.splitTextToSize(d.payerAddress || '', bw - 8);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#444444');
+    const payerAddrLines = doc.splitTextToSize(String(d.payerAddress || ''), bw - 8);
     doc.text(payerAddrLines, bx, y + 19);
 
     y += boxH + 8;
@@ -1400,33 +1402,33 @@
       const colW = cw / 2 - 10;
 
       if (isACH) {
-        txt(col1, y + 13, `Bank: ${d.bankName || ''}`, { maxWidth: colW });
-        txt(col2, y + 13, `Account Holder: ${d.bankHolder || ''}`, { maxWidth: colW });
-        txt(col1, y + 20, `Account Number: ${d.bankAccount || ''}`, { maxWidth: colW });
-        txt(col2, y + 20, `Routing (ABA): ${parts['Routing'] || ''}`, { maxWidth: colW });
-        txt(col1, y + 27, `Account Type: ${parts['Type'] || ''}`, { maxWidth: colW });
+        txt(col1, y + 13, 'Bank: ' + String(d.bankName || ''));
+        txt(col2, y + 13, 'Account Holder: ' + String(d.bankHolder || ''));
+        txt(col1, y + 20, 'Account Number: ' + String(d.bankAccount || ''));
+        txt(col2, y + 20, 'Routing (ABA): ' + String(parts['Routing'] || ''));
+        txt(col1, y + 27, 'Account Type: ' + String(parts['Type'] || ''));
       } else if (isWire) {
-        txt(col1, y + 13, `Bank: ${d.bankName || ''}`, { maxWidth: colW });
-        txt(col2, y + 13, `Account Holder: ${d.bankHolder || ''}`, { maxWidth: colW });
-        txt(col1, y + 20, `Account / IBAN: ${d.bankAccount || ''}`, { maxWidth: colW });
-        txt(col2, y + 20, `SWIFT/BIC: ${parts['SWIFT'] || ''}`, { maxWidth: colW });
-        txt(col1, y + 27, `Country: ${parts['Country'] || ''}`, { maxWidth: colW });
-        txt(col2, y + 27, `Bank Address: ${parts['Bank Addr'] || ''}`, { maxWidth: colW });
-        if (parts['Intermediary']) txt(col1, y + 34, `Intermediary: ${parts['Intermediary']}`, { maxWidth: cw - 8 });
+        txt(col1, y + 13, 'Bank: ' + String(d.bankName || ''));
+        txt(col2, y + 13, 'Account Holder: ' + String(d.bankHolder || ''));
+        txt(col1, y + 20, 'Account / IBAN: ' + String(d.bankAccount || ''));
+        txt(col2, y + 20, 'SWIFT/BIC: ' + String(parts['SWIFT'] || ''));
+        txt(col1, y + 27, 'Country: ' + String(parts['Country'] || ''));
+        txt(col2, y + 27, 'Bank Address: ' + String(parts['Bank Addr'] || ''));
+        if (parts['Intermediary']) txt(col1, y + 34, 'Intermediary: ' + String(parts['Intermediary']));
       } else {
-        txt(col1, y + 13, `Bank: ${d.bankName || ''}`, { maxWidth: colW });
-        txt(col2, y + 13, `Account Holder: ${d.bankHolder || ''}`, { maxWidth: colW });
-        txt(col1, y + 20, `Account Number: ${d.bankAccount || ''}`, { maxWidth: colW });
-        txt(col2, y + 20, `Routing / SWIFT: ${d.bankSwift || ''}`, { maxWidth: colW });
+        txt(col1, y + 13, 'Bank: ' + String(d.bankName || ''));
+        txt(col2, y + 13, 'Account Holder: ' + String(d.bankHolder || ''));
+        txt(col1, y + 20, 'Account Number: ' + String(d.bankAccount || ''));
+        txt(col2, y + 20, 'Routing / SWIFT: ' + String(d.bankSwift || ''));
       }
 
       y += payH + 8;
     }
 
     // ── Declaration ──
-    doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); setTxt('#666');
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(7.5); setTxt('#666666');
     const decl = 'I hereby certify that the expenses listed above were incurred for legitimate business purposes on behalf of Cross Systems Group Corp. and that I have not been reimbursed for these amounts previously. Original receipts are available upon request.';
-    const declLines = doc.splitTextToSize(decl, cw);
+    const declLines = doc.splitTextToSize(String(decl), cw);
     doc.text(declLines, ml, y);
     y += declLines.length * 4 + 6;
 
@@ -1437,15 +1439,15 @@
     }
     setDraw('#aaa');
     doc.line(ml, y + 20, ml + 80, y + 20);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#888');
-    txt(ml, y + 25, getSignerName());
-    txt(ml, y + 30, `Date: ${d.invoiceDate}`);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); setTxt('#888888');
+    txt(ml, y + 25, String(getSignerName() || ''));
+    txt(ml, y + 30, 'Date: ' + String(d.invoiceDate || ''));
 
     // ── Footer ──
     setFill('#0f0e0d');
     doc.rect(0, 287, W, 10, 'F');
     doc.setFont('helvetica', 'normal'); doc.setFontSize(7); setTxt('#8a8278');
-    txt(W / 2, 293.5, `Generated on ${new Date().toLocaleDateString('en-US')} · Confidential document`, { align: 'center' });
+    txt(W / 2, 293.5, 'Generated on ' + new Date().toLocaleDateString('en-US') + ' · Confidential document', { align: 'center' });
 
     const fname = `Reimbursement_${(d.payeeName || 'Employee').replace(/\s+/g,'_')}_${d.invoiceNum || '001'}.pdf`;
 
