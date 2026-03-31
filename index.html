@@ -1158,18 +1158,18 @@
       const blank = !sigCtx.getImageData(0, 0, canvas.width, canvas.height).data.some(x => x !== 0);
       return blank ? null : canvas.toDataURL('image/png');
     } else {
-      // render typed name onto an offscreen canvas with Dancing Script
       const text = document.getElementById('sigTypedInput').value.trim();
       if (!text) return null;
       const oc = document.createElement('canvas');
-      oc.width = 800; oc.height = 110;
+      oc.width = 600; oc.height = 100;
       const ctx = oc.getContext('2d');
-      ctx.clearRect(0, 0, 800, 110);
+      ctx.clearRect(0, 0, oc.width, oc.height);
       ctx.fillStyle = '#0f0e0d';
-      ctx.font = '72px "Dancing Script", cursive';
+      // Use a safe fallback font stack in case Dancing Script hasn't loaded
+      ctx.font = '600 58px "Dancing Script", "Brush Script MT", cursive';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(text, 16, 58);
+      ctx.fillText(text, 12, 52);
       return oc.toDataURL('image/png');
     }
   }
@@ -1434,8 +1434,13 @@
 
     // ── Signature ──
     const sigDataUrl = getSigDataUrl();
-    if (sigDataUrl) {
-      doc.addImage(sigDataUrl, 'PNG', ml, y, 70, 18);
+    if (sigDataUrl && sigDataUrl.startsWith('data:image')) {
+      try {
+        const sigType = sigDataUrl.includes('image/png') ? 'PNG' : 'JPEG';
+        doc.addImage(sigDataUrl, sigType, ml, y, 70, 18);
+      } catch(sigErr) {
+        console.warn('Signature image error:', sigErr);
+      }
     }
     setDraw('#aaa');
     doc.line(ml, y + 20, ml + 80, y + 20);
